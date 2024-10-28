@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.harvard.hul.ois.jhove.AESAudioMetadata;
@@ -273,35 +274,31 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
             ;
             _writer.println(margn2 + elementEnd("mimeTypes"));
         }
-        List<Signature> list1 = module.getSignature();
-        int n = list1.size();
-        if (n > 0) {
+        List<Signature> sigList = module.getSignature();
+        if (!sigList.isEmpty()) {
             _writer.println(margn2 + elementStart("signatures"));
             ++_level;
-            for (int i = 0; i < n; i++) {
-                showSignature(list1.get(i));
+            for (Signature sig : sigList) {
+                showSignature(sig);
             }
             _level--;
             _writer.println(margn2 + elementEnd("signatures"));
         }
-        List<Document> list2 = module.getSpecification();
-        n = list2.size();
-        if (n > 0) {
+        List<Document> docList = module.getSpecification();
+        if (!docList.isEmpty()) {
             _writer.println(margn2 + elementStart("specifications"));
             ++_level;
-            for (int i = 0; i < n; i++) {
-                showDocument(list2.get(i));
+            for (Document doc : docList) {
+                showDocument(doc);
             }
             --_level;
             _writer.println(margn2 + elementEnd("specifications"));
         }
-        List<String> ftr = module.getFeatures();
-        if (ftr != null && !ftr.isEmpty()) {
+        List<String> featList = module.getFeatures();
+        if (featList != null && !featList.isEmpty()) {
             _writer.println(margn2 + elementStart("features"));
-            Iterator<String> iter = ftr.iterator();
-            while (iter.hasNext()) {
-                s = iter.next();
-                _writer.println(margn3 + element("feature", s));
+            for (String feat : featList) {
+                _writer.println(margn3 + element("feature", feat));
             }
             _writer.println(margn2 + elementEnd("features"));
         }
@@ -422,26 +419,24 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
             _writer.println(margn2 + element("status", wfStr));
         }
 
-        List<String> list1 = info.getSigMatch();
-        int n = list1.size();
-        if (n > 0) {
+        List<String> sigMatches = info.getSigMatch();
+        if (!sigMatches.isEmpty()) {
             _writer.println(margn2 + elementStart("sigMatch"));
             _level++;
-            for (int i = 0; i < n; i++) {
+            for (String sigMatch : sigMatches) {
                 _writer.println(margn2
-                        + element("module", list1.get(i)));
+                        + element("module", sigMatch));
             }
             _level--;
             _writer.println(margn2 + elementEnd("sigMatch"));
         }
 
-        List<Message> list2 = info.getMessage();
-        n = list2.size();
-        if (n > 0) {
+        List<Message> messages = info.getMessage();
+        if (!messages.isEmpty()) {
             _writer.println(margn2 + elementStart("messages"));
             _level++;
-            for (int i = 0; i < n; i++) {
-                showMessage(list2.get(i));
+            for (Message message : messages) {
+                showMessage(message);
             }
             _level--;
             _writer.println(margn2 + elementEnd("messages"));
@@ -451,38 +446,31 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
             _writer.println(margn2 + element("mimeType", s));
         }
 
-        List<String> list3 = info.getProfile();
-        n = list3.size();
-        if (n > 0) {
+        List<String> profiles = info.getProfile();
+        if (!profiles.isEmpty()) {
             _writer.println(margn2 + elementStart("profiles"));
-            for (int i = 0; i < n; i++) {
+            for (String profile : profiles) {
                 _writer.println(margn3
-                        + element("profile", list3.get(i)));
+                        + element("profile", profile));
             }
             _writer.println(margn2 + elementEnd("profiles"));
         }
 
         Map<String, Property> map = info.getProperty();
-        if (map != null) {
-            if (map.size() > 0) {
-                _writer.println(margn2 + elementStart("properties"));
-                Iterator<String> iter = map.keySet().iterator();
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    Property property = info.getProperty(key);
-                    showProperty(property);
-                }
-                _writer.println(margn2 + elementEnd("properties"));
+        if (map != null && !map.isEmpty()) {
+            _writer.println(margn2 + elementStart("properties"));
+            for (Entry<String, Property> entry : map.entrySet()) {
+                showProperty(entry.getValue());
             }
+            _writer.println(margn2 + elementEnd("properties"));
         }
 
-        List<Checksum> list4 = info.getChecksum();
-        n = list4.size();
-        if (n > 0) {
+        List<Checksum> checksums = info.getChecksum();
+        if (!checksums.isEmpty()) {
             _writer.println(margn2 + elementStart("checksums"));
             _level++;
-            for (int i = 0; i < n; i++) {
-                showChecksum(list4.get(i));
+            for (Checksum checksum : checksums) {
+                showChecksum(checksum);
             }
             _level--;
             _writer.println(margn2 + elementEnd("checksums"));
