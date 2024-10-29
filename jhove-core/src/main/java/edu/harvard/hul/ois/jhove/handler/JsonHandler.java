@@ -113,6 +113,7 @@ public class JsonHandler extends HandlerBase {
 
 	/* Sample rate. */
 	private double _sampleRate;
+    private String reportingModule = "";
 
 	/******************************************************************
 	 * CLASS CONSTRUCTOR.
@@ -327,9 +328,10 @@ public class JsonHandler extends HandlerBase {
 		infoBuilder.add("uri", info.getUri());
 
 		if (module != null) {
+            this.reportingModule = module.getName();
 			infoBuilder.add(
 					"reportingModule",
-					Json.createObjectBuilder().add("name", module.getName())
+					Json.createObjectBuilder().add("name", this.reportingModule)
 							.add(RELEASE_CONSTANT, module.getRelease())
 							.add(DATE_CONSTANT, date.format(module.getDate())));
 		}
@@ -605,6 +607,7 @@ public class JsonHandler extends HandlerBase {
 		String id = message.getJhoveMessage().getId();
 		if (!(id == null || id.isEmpty() || JhoveMessages.NO_ID.equals(id))) {
 			msgBuilder.add("id", message.getId());
+            msgBuilder.add("infoLink", Handlers.makeInfoLink(this.reportingModule, id));
 		}
 		return msgBuilder;
 	}

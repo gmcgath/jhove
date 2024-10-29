@@ -111,6 +111,8 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
 
     /* Sample rate. */
     private double _sampleRate;
+    /** Reporting module */
+    private String reportingModule = "";
 
     /******************************************************************
      * CLASS CONSTRUCTOR.
@@ -346,8 +348,9 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
         if (module != null) {
             String[][] attr2 = { { "release", module.getRelease() },
                     { "date", date.format(module.getDate()) } };
+            this.reportingModule = module.getName();
             _writer.println(margn2
-                    + element("reportingModule", attr2, module.getName()));
+                    + element("reportingModule", attr2, this.reportingModule));
         }
         /*
          * else { String [][] attr2 = { {"severity", "error"} }; _writer.println
@@ -650,12 +653,13 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
 
     protected void showMessage(Message message) {
         String margin = getIndent(++_level);
-        String[][] attrs = new String[4][];
+        String[][] attrs = new String[5][];
         boolean hasAttr = false;
         attrs[0] = new String[] { "subMessage", null };
         attrs[1] = new String[] { "offset", null };
         attrs[2] = new String[] { "severity", null };
         attrs[3] = new String[] { "id", null };
+        attrs[4] = new String[] { "infoLink", null };
 
         String submsg = message.getSubMessage();
         if (submsg != null) {
@@ -674,8 +678,10 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
         String id = message.getJhoveMessage().getId();
         if (!(id == null || id.isEmpty() || id.equals(JhoveMessages.NO_ID))) {
             attrs[3][1] = message.getId();
+            attrs[4][1] = Handlers.makeInfoLink(this.reportingModule, id);
             hasAttr = true;
         }
+
         if (hasAttr) {
             _writer.println(margin
                     + element("message", attrs, message.getMessage()));
