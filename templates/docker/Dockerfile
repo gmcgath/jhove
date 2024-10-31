@@ -1,6 +1,6 @@
 # See https://docs.docker.com/engine/userguide/eng-image/multistage-build/
 # First build the app on a maven open jdk 11 container
-ARG JHOVE_VERSION=1.33.0-SNAPSHOT
+ARG JHOVE_VERSION=${project.version}
 FROM maven:3-eclipse-temurin-11-alpine AS dev-builder
 ARG JHOVE_VERSION
 ENV JHOVE_VERSION=${JHOVE_VERSION}
