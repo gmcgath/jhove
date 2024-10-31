@@ -1,5 +1,3 @@
-package edu.harvard.hul.ois.jhove;
-
 /**********************************************************************
  * Jhove - JSTOR/Harvard Object Validation Environment
  * Copyright 2004-2007 by the President and Fellows of Harvard College
@@ -19,13 +17,7 @@ package edu.harvard.hul.ois.jhove;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA
  **********************************************************************/
-
-import edu.harvard.hul.ois.jhove.App;
-import edu.harvard.hul.ois.jhove.ExitCode;
-import edu.harvard.hul.ois.jhove.CoreMessageConstants;
-import edu.harvard.hul.ois.jhove.JhoveBase;
-import edu.harvard.hul.ois.jhove.Module;
-import edu.harvard.hul.ois.jhove.OutputHandler;
+package edu.harvard.hul.ois.jhove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +30,15 @@ public class Jhove {
     /** Logger for this class. */
     private static final Logger LOGGER = Logger.getLogger(Jhove.class.getCanonicalName());
 
+    private static final String C_CONFIG_OPTION = "-c";
+    private static final String X_CONFIG_OPTION = "-x";
+    private static final String NOT_FOUND = "not found";
+    private static final String HANDLER = "Handler '";
+    private static final String MODULE = "Module";
+
     private Jhove() {
         throw new AssertionError("Should never enter private constructor");
     }
-
-    private static final String C_CONFIG_OPTION = "-c";
-    private static final String X_CONFIG_OPTION = "-x";
-    private static final String NOT_FOUND = "' not found";
-    private static final String HANDLER = "Handler '";
 
     /**
      * MAIN ENTRY POINT.
@@ -233,17 +226,17 @@ public class Jhove {
             }
             Module module = je.getModule(moduleName);
             if (module == null && moduleName != null) {
-                LOGGER.log(Level.SEVERE, "Module '" + moduleName + NOT_FOUND);
+                LOGGER.log(Level.SEVERE, notFoundMessage(MODULE, moduleName));
                 System.exit(ExitCode.ERROR.getReturnCode());
             }
             OutputHandler about = je.getHandler(aboutHandler);
             if (about == null && aboutHandler != null) {
-                LOGGER.log(Level.SEVERE, HANDLER + aboutHandler + NOT_FOUND);
+                LOGGER.log(Level.SEVERE, notFoundMessage(HANDLER, aboutHandler));
                 System.exit(ExitCode.ERROR.getReturnCode());
             }
             OutputHandler handler = je.getHandler(handlerName);
             if (handler == null && handlerName != null) {
-                LOGGER.log(Level.SEVERE, HANDLER + handlerName + NOT_FOUND);
+                LOGGER.log(Level.SEVERE, notFoundMessage(HANDLER, handlerName));
                 System.exit(ExitCode.ERROR.getReturnCode());
             }
             String[] dirFileOrUri = null;
@@ -264,9 +257,13 @@ public class Jhove {
             je.setSignatureFlag(signature);
             je.dispatch(app, module, about, handler, outputFile, dirFileOrUri);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             e.printStackTrace(System.err);
             System.exit(ExitCode.ERROR.getReturnCode());
         }
+    }
+
+    private static final String notFoundMessage(final String notFoundType, final String notFoundName) {
+        return String.format("%s '%s' %s", notFoundType, notFoundName, NOT_FOUND);
     }
 }
