@@ -485,8 +485,16 @@ public class RepTreeRoot extends DefaultMutableTreeNode {
                     break;
                 }
                 case BYTE: {
-                    addToNode(node, (Byte[]) pVal);
-                    break;
+                    if (pVal instanceof byte[]) {
+		               byte[] byteArray = (byte[]) pVal;
+        		       Byte[] byteObjectArray = new Byte[byteArray.length];
+        		       for (int i = 0; i < byteArray.length; i++) {
+        		         byteObjectArray[i] = byteArray[i]; // Autoboxing from byte to Byte
+        		        }
+        		       addToNode(node, (Byte[]) byteObjectArray);
+        		    } else {
+        		       addToNode(node, (Byte[]) pVal);
+        		    }
                 }
                 case STRING: {
                     addToNode(node, (String[]) pVal);
