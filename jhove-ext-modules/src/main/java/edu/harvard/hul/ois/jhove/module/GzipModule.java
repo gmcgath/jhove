@@ -241,7 +241,7 @@ public class GzipModule extends ModuleBase {
      */
     private void reportResults(GzipReader reader, RepInfo repInfo) {
         JwatJhoveIdMinter minter = JwatJhoveIdMinter.getInstance(NAME);
-        Diagnostics<Diagnosis> diagnostics = reader.diagnostics;
+        Diagnostics diagnostics = reader.diagnostics;
         if (diagnostics.hasErrors()) {
             for (Diagnosis d : diagnostics.getErrors()) {
                 repInfo.setMessage(new ErrorMessage(minter.mint(d)));
