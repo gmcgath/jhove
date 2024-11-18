@@ -84,10 +84,10 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
     private static final String NAME = "XML";
 
     /** Handler release identifier. */
-    private static final String RELEASE = "1.12";
+    private static final String RELEASE = "1.13";
 
     /** Handler release date. */
-    private static final int[] DATE = { 2024, 8, 22 };
+    private static final int[] DATE = { 2024, 11, 19 };
 
     /** Handler informative note. */
     private static final String NOTE = "This output handler is defined by the XML Schema "

@@ -59,8 +59,8 @@ public class TextHandler extends HandlerBase {
      ******************************************************************/
 
     private static final String NAME = "TEXT";
-    private static final String RELEASE = "1.7";
-    private static final int[] DATE = { 2022, 8, 22 };
+    private static final String RELEASE = "1.8";
+    private static final int[] DATE = { 2024, 11, 19 };
     private static final String NOTE = "This is the default JHOVE output "
             + "handler";
     private static final String RIGHTS = "Derived from software Copyright 2004-2011 "
