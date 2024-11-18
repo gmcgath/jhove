@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JHOVE - JSTOR/Harvard Object Validation Environment -->
+<!-- Copyright 2004-2007 by JSTOR and the President and Fellows of Harvard College -->
+<!-- JHOVE XML output handler schema, Rel. 1.8 (2019-03-29) -->
+<!-- Property value can continue any namespace, 2007-08-30 -->
+<xs:schema targetNamespace="http://schema.openpreservation.org/ois/xml/ns/jhove" xmlns="http://schema.openpreservation.org/ois/xml/ns/jhove" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="jhove">
+		<xs:annotation>
+			<xs:documentation>This is the XML Schema for the output produced by the JHOVE XML output handler.
+   </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="date" type="xs:dateTime">
+					<xs:annotation>
+						<xs:documentation>The date/time at which JHOVE was invoked.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:choice>
+					<xs:element name="app" type="appType">
+						<xs:annotation>
+							<xs:documentation>Descriptive information about JHOVE itself. Requested by the "jhove -h xml" command.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="audit" type="auditType">
+						<xs:annotation>
+							<xs:documentation>Results of a file audit, i.e., per-file pathname, MIME type, and status information.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="handler" type="handlerType">
+						<xs:annotation>
+							<xs:documentation>Descriptive information about a JHOVE output handler. Requested by the "jhove -h xml -H handler" command.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="module" type="moduleType">
+						<xs:annotation>
+							<xs:documentation>Descriptive information about a JHOVE module. Requested by the "jhove -h xml -m module" command.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="repInfo" type="repInfoType" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Unbounded sequence of representation information elements.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>JHOVE application name.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="release" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>JHOVE release identifier: "major.minor".</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="date" type="xs:date" use="required">
+				<xs:annotation>
+					<xs:documentation>JHOVE release date: "yyyy-mm-dd"</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="appType">
+		<xs:annotation>
+			<xs:documentation>Descriptive information about JHOVE itself. Requested by the "jhove -h xml" command.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="api" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional JHOVE API information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="date" type="xs:date" use="optional">
+								<xs:annotation>
+									<xs:documentation>The release date for the API: "yyyy-mm-dd".</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="configuration" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional configuration file pathname.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="saxParser" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>SAX parser fully-qualified class name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="jhoveHome" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>JHOVE home directory pathname.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="encoding" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Output handler encoding.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="tempDirectory" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Temporary directory pathname.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="bufferSize" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Buffer size for buffered I/O.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="modules">
+				<xs:annotation>
+					<xs:documentation>List of modules configured for this invocation.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="module" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Module name, generally of the form "FORMAT-vendor".</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="release" type="xs:string" use="optional">
+											<xs:annotation>
+												<xs:documentation>The release identifier for the module.</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="outputHandlers">
+				<xs:annotation>
+					<xs:documentation>List of output handlers configued for this invocation.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="outputHandler" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Output handler name.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="release" type="xs:string" use="optional">
+											<xs:annotation>
+												<xs:documentation>The release identifier for the module.</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="usage" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Command line invocation syntax.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="rights" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Rights statement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="auditType">
+		<xs:annotation>
+			<xs:documentation>Results of a file audit, i.e., per-file pathname, MIME type, and status information.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="file" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Per-file informatino: pathname, MIME type, and status information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="mime" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:documentation>The file MIME type.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="status" use="optional">
+								<xs:annotation>
+									<xs:documentation>The file validation status.</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="not found"/>
+										<xs:enumeration value="not well-formed"/>
+										<xs:enumeration value="valid"/>
+										<xs:enumeration value="well-formed"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="md5" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:documentation>MD5 checksum for the file.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="home" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Home directory from which the Audit handler was invoked.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="handlerType">
+		<xs:annotation>
+			<xs:documentation>Descriptive information about a JHOVE output handler. Requested by the "jhove -h xml -H handler" command.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Output handler name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="release" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Handler release identifier: "major.minor".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="date" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Handler release date: "yyyy-mm-dd".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="specifications" type="specificationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of specification documents for the handler.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="agent" type="agentType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The output handler vendor.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="note" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional informative note about the handler.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="rights" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional rights statement about the handler. Typically this would niclude a copyright statement of the vendor and a summary of the licesnse agreement under which the handler is release.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="moduleType">
+		<xs:annotation>
+			<xs:documentation>Descriptive information about a JHOVE module. Requested by the "jhove -h xml -m module" command.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Module name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="release" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Module release identifier: "major.minor".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="date" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Module release date: "yyyy-mm-dd".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="formats" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of modules formats.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="format" type="xs:string" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Module format</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="coverage" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional statement of format coverage.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="mimeTypes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of format MIME types.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="mimeType" type="xs:string" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Format MIME type</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="signatures" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of signatures.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="signature" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="type">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="File extension"/>
+												<xs:enumeration value="Mac OS file type"/>
+												<xs:enumeration value="Magic number"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="value" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>Signature value.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="offset" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Fixed byte offset of the signature</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="note" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Informative note about the signature.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="use" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Use flag for the signature.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="specifications" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of specification documents.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="specification" type="specificationType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Format specification.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="features" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>List of module features: canValidate, canCharacterize, etc.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="feature" type="xs:string" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Module feature</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="methodology">
+				<xs:annotation>
+					<xs:documentation>List of methodology statements</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="wellFormed" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Statement of well-formedness criteria..</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="validity" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Statement of validty criteria.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="repInfo" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Statement of representation information properties.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="agent" type="agentType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional vendor agent.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="note" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional informative note.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="rights" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional rights statement. Generally this includes a copyright statement of the vendor and a summary of the license agreement under which the module is released.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="repInfoType">
+		<xs:annotation>
+			<xs:documentation>Descriptive information about a digital object.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="reportingModule" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The module producing the representation information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="release" type="xs:string" use="required">
+								<xs:annotation>
+									<xs:documentation>Release identifier for the module.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="date" type="xs:date" use="required">
+								<xs:annotation>
+									<xs:documentation>Release date for the module.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="created" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Object creation date timestamp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="lastModified" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Object last modified data timestemp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="size" type="xs:nonNegativeInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Object size in bytes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="format" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Object format.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="version" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Object version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="status" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Object validation status.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sigMatch" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="module" type="xs:string" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Modules with matching internal signatures.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="messages" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="message" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="id" type="xs:string" use="optional"/>
+										<xs:attribute name="subMessage" type="xs:string" use="optional"/>
+										<xs:attribute name="offset" type="xs:nonNegativeInteger" use="optional"/>
+										<xs:attribute name="severity" use="optional">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="error"/>
+													<xs:enumeration value="info"/>
+													<xs:enumeration value="warning"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="mimeType" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Object MIME type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="profiles" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="profile" type="xs:string" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="properties" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="property" type="propertyType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="checksums" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="checksum" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="type" use="required">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="CRC32"/>
+													<xs:enumeration value="MD5"/>
+													<xs:enumeration value="SHA-1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="note" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="uri" type="xs:anyURI"/>
+	</xs:complexType>
+	<xs:complexType name="agentType">
+		<xs:annotation>
+			<xs:documentation>Personal or corporate agent type.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Agent name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type">
+				<xs:annotation>
+					<xs:documentation>Agent type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Commercial"/>
+						<xs:enumeration value="Educational"/>
+						<xs:enumeration value="Government"/>
+						<xs:enumeration value="Non-profit"/>
+						<xs:enumeration value="Standards body"/>
+						<xs:enumeration value="Other"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="address" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional agent postal address.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="telephone" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional agent telephone number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="fax" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional agent FAX number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="email" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional agent email address.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="web" type="xs:anyURI" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional agent web site URI.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="type" use="required">
+			<xs:annotation>
+				<xs:documentation>Agent role.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Author"/>
+					<xs:enumeration value="Editor"/>
+					<xs:enumeration value="Publisher"/>
+					<xs:enumeration value="Vendor"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="propertyType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="values">
+				<xs:complexType>
+					<xs:choice maxOccurs="unbounded">
+						<xs:element name="property" type="propertyType">
+							<xs:annotation>
+								<xs:documentation>Allow recursive structure of property types</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="value">
+							<xs:annotation>
+								<xs:documentation>The value element can contain a scalar actual value or additional markup from known namespaces</xs:documentation>
+							</xs:annotation>
+							<xs:complexType mixed="true">
+								<xs:sequence>
+									<xs:any namespace="##any" processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+					<xs:attribute name="arity" use="required">
+						<xs:annotation>
+							<xs:documentation>The arity of the property. The non-scalar arities have the semantics associated with the Java collection types of the same name.</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="Array"/>
+								<xs:enumeration value="List"/>
+								<xs:enumeration value="Map"/>
+								<xs:enumeration value="Scalar"/>
+								<xs:enumeration value="Set"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="type" use="required">
+						<xs:annotation>
+							<xs:documentation>The type of the property. Most types have the semantics of the Java types of the same name.</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="AESAudioMetadata"/>
+								<xs:enumeration value="Boolean"/>
+								<xs:enumeration value="Byte"/>
+								<xs:enumeration value="Character"/>
+								<xs:enumeration value="Date"/>
+								<xs:enumeration value="Double"/>
+								<xs:enumeration value="Float"/>
+								<xs:enumeration value="Integer"/>
+								<xs:enumeration value="Long"/>
+								<xs:enumeration value="NISOImageMetadata"/>
+								<xs:enumeration value="Object"/>
+								<xs:enumeration value="Property"/>
+								<xs:enumeration value="Rational"/>
+								<xs:enumeration value="Short"/>
+								<xs:enumeration value="String"/>
+								<xs:enumeration value="TextMDMetadata"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="specificationType">
+		<xs:annotation>
+			<xs:documentation>Description information about a specification document.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="title" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Document title.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type">
+				<xs:annotation>
+					<xs:documentation>Document type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Article"/>
+						<xs:enumeration value="Book"/>
+						<xs:enumeration value="Report"/>
+						<xs:enumeration value="RFC"/>
+						<xs:enumeration value="Standard"/>
+						<xs:enumeration value="Web"/>
+						<xs:enumeration value="Other"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="authors" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of authors.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="agent" type="agentType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Author agent.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="publishers" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of publishers.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="agent" type="agentType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Publisher agent.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="edition" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional document edition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional document edition: "yyyy[-mm[-dd]]".</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="xs:gYear xs:gYearMonth xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="enumeration" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional document enumeration.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pages" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional document pages.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="identifiers" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of identifiers.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="identifier" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Document identifier.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="value" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>Identifier value.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="type">
+										<xs:annotation>
+											<xs:documentation>Identifier type.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="ANSI"/>
+												<xs:enumeration value="CCITT"/>
+												<xs:enumeration value="DDC"/>
+												<xs:enumeration value="DOI"/>
+												<xs:enumeration value="ECMA"/>
+												<xs:enumeration value="Handler"/>
+												<xs:enumeration value="ISO"/>
+												<xs:enumeration value="ISBN"/>
+												<xs:enumeration value="ITU"/>
+												<xs:enumeration value="JEITA"/>
+												<xs:enumeration value="LC"/>
+												<xs:enumeration value="LCCN"/>
+												<xs:enumeration value="NISO"/>
+												<xs:enumeration value="PII"/>
+												<xs:enumeration value="RFC"/>
+												<xs:enumeration value="SICI"/>
+												<xs:enumeration value="URI"/>
+												<xs:enumeration value="URL"/>
+												<xs:enumeration value="URN"/>
+												<xs:enumeration value="Other"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="note" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Optional informative note.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="note" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional informative note.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
