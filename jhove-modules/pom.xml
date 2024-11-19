@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.openpreservation.jhove</groupId>
     <artifactId>jhove</artifactId>
-    <version>1.32.0</version>
+    <version>1.32.1-RC1</version>
   </parent>
 
   <groupId>org.openpreservation.jhove.modules</groupId>
   <artifactId>jhove-modules</artifactId>
   <packaging>pom</packaging>
-  <version>1.32.0</version>
+  <version>1.32.1-RC1</version>
   <name>JHOVE Validation Modules</name>
   <description>The JHOVE HUL validation modules.</description>
 
@@ -19,7 +19,7 @@
     <dependency>
       <groupId>org.openpreservation.jhove</groupId>
       <artifactId>jhove-core</artifactId>
-      <version>1.32.0</version>
+      <version>1.32.1-RC1</version>
     </dependency>
     <dependency>
       <groupId>org.junit.vintage</groupId>
