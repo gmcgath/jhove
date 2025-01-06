@@ -13,7 +13,7 @@ TEST_BASELINES_ROOT="${TEST_ROOT}/baselines"
 TEST_INSTALL_ROOT="${TEST_ROOT}/jhove"
 CANDIDATE_ROOT="${TEST_ROOT}/candidates"
 TARGET_ROOT="${TEST_ROOT}/targets"
-BASELINE_VERSION=1.30
+BASELINE_VERSION=1.32
 
 # Create the JHOVE test root if it doesn't exist
 [[ -d "${TEST_ROOT}" ]] || mkdir -p "${TEST_ROOT}"
