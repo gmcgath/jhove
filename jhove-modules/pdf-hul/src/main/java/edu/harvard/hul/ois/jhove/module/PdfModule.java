@@ -4351,7 +4351,7 @@ public class PdfModule extends ModuleBase {
             } catch (PdfInvalidException e) {
                 info.setValid(false);
                 info.setMessage(new ErrorMessage(JhoveMessages.getMessageInstance(
-                    MessageConstants.PDF_HUL_133.getId(), MessageConstants.PDF_HUL_133.getMessage(), "For date property " + propName), _parser.getOffset()));
+                    MessageConstants.PDF_HUL_133.getId(), MessageConstants.PDF_HUL_133.getMessage(), "For date property: " + propName + ", value: " + lit.getValue()), _parser.getOffset()));
             }
         }
     }
