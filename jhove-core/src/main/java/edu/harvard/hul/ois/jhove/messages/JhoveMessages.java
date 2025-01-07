@@ -48,7 +48,11 @@ public enum JhoveMessages {
 		return getMessageInstance(id, message, EMPTY_MESSAGE);
 	}
 
-	/**
+    public static JhoveMessage getMessageInstance(final JhoveMessage message, final String subMessage) {
+        return getMessageInstance(message.getId(), message.getMessage(), subMessage);
+    }
+
+    /**
 	 * Create a new JhoveMessage instance with the given id, message and
 	 * sub-message
 	 * 

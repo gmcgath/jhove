@@ -634,7 +634,9 @@ public class PdfModule extends ModuleBase {
 
         _signature.add(new ExternalSignature(EXT, SignatureType.EXTENSION,
                 SignatureUseType.OPTIONAL));
-        _signature.add(new InternalSignature(PdfHeader.PDF_SIG_HEADER,
+        _signature.add(new InternalSignature(PdfHeader.PDF_1_SIG_HEADER,
+                SignatureType.MAGIC, SignatureUseType.MANDATORY, 0));
+        _signature.add(new InternalSignature(PdfHeader.PDF_2_SIG_HEADER,
                 SignatureType.MAGIC, SignatureUseType.MANDATORY, 0));
 
         doc = new Document(
@@ -1043,23 +1045,18 @@ public class PdfModule extends ModuleBase {
         _nFonts = 0;
     }
 
-    protected boolean parseHeader(RepInfo info) throws IOException {
+    protected boolean parseHeader(RepInfo info) {
         PdfHeader header = null;
         try {
             header = PdfHeader.parseHeader(_parser);
-        } catch (PdfMalformedException e) {
-            info.setWellFormed(false);
-            info.setMessage(new ErrorMessage(MessageConstants.PDF_HUL_155, 0L)); // PDF-HUL-155
+        } catch (PdfException e) {
+            if (e instanceof PdfInvalidException) {
+                info.setValid(false);
+            } else {
+                info.setWellFormed(false);
+            }
+            info.setMessage(new ErrorMessage(e.getJhoveMessage(), 0L)); // PDF-HUL-155
             return false;
-        }
-        if (header == null) {
-            info.setWellFormed(false);
-            info.setMessage(new ErrorMessage(MessageConstants.PDF_HUL_137, 0L)); // PDF-HUL-137
-            return false;
-        }
-        if (!header.isVersionValid()) {
-            info.setValid(false);
-            info.setMessage(new ErrorMessage(MessageConstants.PDF_HUL_148, 0L)); // PDF-HUL-148
         }
         _version = header.getVersionString();
         _pdfACompliant = header.isPdfACompliant();
