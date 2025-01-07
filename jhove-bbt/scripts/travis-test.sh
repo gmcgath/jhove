@@ -26,7 +26,7 @@ BASELINE_VERSION=1.32
 echo "INFO: Checking for baseline installation for release version ${BASELINE_VERSION}."
 if [[ ! -d "${TEST_INSTALL_ROOT}/${BASELINE_VERSION}" ]]; then
 	echo " - INFO: installing baseline version ${BASELINE_VERSION} to: ${TEST_INSTALL_ROOT}/${BASELINE_VERSION}."
-	installJhoveFromURL "http://software.openpreservation.org/rel/jhove/jhove-${BASELINE_VERSION}.jar" "${TEST_INSTALL_ROOT}" "${BASELINE_VERSION}"
+	installJhoveFromURL "http://software.openpreservation.org/rel/jhove/${BASELINE_VERSION}/jhove-xplt-installer-${BASELINE_VERSION}.1-RC1.jar" "${TEST_INSTALL_ROOT}" "${BASELINE_VERSION}"
 else
 	echo " - INFO: using baseline version ${BASELINE_VERSION} at: ${TEST_INSTALL_ROOT}/${BASELINE_VERSION}."
 fi
@@ -54,7 +54,9 @@ fi
 [[ -d "${TARGET_ROOT}" ]] || mkdir -p "${TARGET_ROOT}"
 
 # Grab the Major and Minor versions from the full Maven project version string
-MVN_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec -f jhove-installer/pom.xml)
+# FIXME: Colorised output is not working with the following line
+# MVN_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec -f jhove-installer/pom.xml)
+MVN_VERSION="1.33.0-SNAPSHOT"
 MAJOR_MINOR_VER="${MVN_VERSION%.*}"
 JHOVE_INSTALLER="./jhove-installer/target/jhove-xplt-installer-${MVN_VERSION}.jar"
 
