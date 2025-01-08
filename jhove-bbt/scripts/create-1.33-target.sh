@@ -64,7 +64,7 @@ find "${targetRoot}" -type f -name "audit-PDF-hul.jhove.xml" -exec sed -i 's/<re
 find "${targetRoot}" -type f -name "audit-PDF-hul.jhove.xml" -exec sed -i 's/2024-08-22/2025-01-24/' {} \;
 
 # Fix the results affected by the improvements to date handling in the PDF module
-sed -i 's/<message offset/<message subMessage="For date property CreationDate" offset/' "${targetRoot}/examples/modules/PDF-hul/AA_Banner.pdf.jhove.xml"
+sed -i 's/<message offset/<message subMessage="For date property: CreationDate, value: Tue Feb 03 16:19:57 2004" offset/' "${targetRoot}/examples/modules/PDF-hul/AA_Banner.pdf.jhove.xml"
 if [[ -f "${candidateRoot}/errors/modules/PDF-hul/pdf-hul-9-govdocs-065694.pdf.jhove.xml" ]]; then
 	cp "${candidateRoot}/errors/modules/PDF-hul/pdf-hul-9-govdocs-065694.pdf.jhove.xml" "${targetRoot}/errors/modules/PDF-hul/pdf-hul-9-govdocs-065694.pdf.jhove.xml"
 fi
