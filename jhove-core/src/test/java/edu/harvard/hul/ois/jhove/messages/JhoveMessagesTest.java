@@ -61,10 +61,11 @@ public class JhoveMessagesTest {
 
     @Test
     public void testMessageInstanceNullId() {
+        final String id = null;
         assertThrows("IllegalArgument exception expected",
                 IllegalArgumentException.class,
                 () -> {
-                    JhoveMessages.getMessageInstance(null, "MSG");
+                    JhoveMessages.getMessageInstance(id, "MSG");
                 });
     }
 
