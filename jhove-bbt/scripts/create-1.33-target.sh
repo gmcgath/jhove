@@ -56,3 +56,16 @@ echo "TEST BASELINE: Creating baseline"
 echo " - copying ${baselineRoot} baseline to ${targetRoot}"
 cp -R "${baselineRoot}" "${targetRoot}"
 
+# Insert new PDF-2.x signature nodes into the PDF audit XML files
+find "${targetRoot}" -type f -name "audit-PDF-hul.jhove.xml" -exec sed -i 's/<\/signatures>/ <signature>\n    <type>Magic number<\/type>\n    <value>%PDF-2.<\/value>\n    <offset>0x0<\/offset>\n    <use>Mandatory<\/use>\n   <\/signature>\n  <\/signatures>/' {} \;
+
+# Copy the two new version regression test files, where handling of PDF version declaration has been improved/changed
+declare -a pdf_version_affected=("errors/modules/PDF-hul/pdf-hul-61-CERN-2005-009.pdf.jhove.xml"
+				"regression/modules/PDF-hul/PDF-HUL-137.pdf.jhove.xml"
+				"regression/modules/PDF-hul/PDF-HUL-137_fixed.pdf.jhove.xml")
+for filename in "${pdf_version_affected[@]}"
+do
+	if [[ -f "${candidateRoot}/${filename}" ]]; then
+		cp "${candidateRoot}/${filename}" "${targetRoot}/${filename}"
+	fi
+done
