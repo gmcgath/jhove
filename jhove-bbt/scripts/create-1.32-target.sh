@@ -57,9 +57,9 @@ echo " - copying ${baselineRoot} baseline to ${targetRoot}"
 cp -R "${baselineRoot}" "${targetRoot}"
 
 # Patch release details of the reporting module in the audit file
-find "${targetRoot}" -type f -name "audit.jhove.xml" -exec sed -i 's/outputHandler release="1.11">XML/outputHandler release="1.12">XML/' {} \;
-find "${targetRoot}" -type f -name "audit.jhove.xml" -exec sed -i 's/outputHandler release="1.2">JSON/outputHandler release="1.3">JSON/' {} \;
-find "${targetRoot}" -type f -name "audit.jhove.xml" -exec sed -i 's/outputHandler release="1.6">TEXT/outputHandler release="1.7">TEXT/' {} \;
+find "${targetRoot}" -type f -name "audit.jhove.xml" -exec sed -i 's/outputHandler release="1.11">XML/outputHandler release="1.13">XML/' {} \;
+find "${targetRoot}" -type f -name "audit.jhove.xml" -exec sed -i 's/outputHandler release="1.2">JSON/outputHandler release="1.4">JSON/' {} \;
+find "${targetRoot}" -type f -name "audit.jhove.xml" -exec sed -i 's/outputHandler release="1.6">TEXT/outputHandler release="1.8">TEXT/' {} \;
 
 # Update release details for HTML module
 find "${targetRoot}" -type f -name "*.html.jhove.xml" -exec sed -i 's/<reportingModule release="1.4.3" date="2023-03-16">HTML-hul<\/reportingModule>/<reportingModule release="1.4.4" date="2024-08-22">HTML-hul<\/reportingModule>/' {} \;
@@ -206,6 +206,87 @@ declare -a pdf_offset_affected=("errors/modules/PDF-hul/pdf-hul-5-govdocs-659152
 				"errors/modules/PDF-hul/pdf-hul-10-govdocs-803945.pdf.jhove.xml"
 				"regression/modules/PDF-hul/issue_306.pdf.jhove.xml")
 for filename in "${pdf_offset_affected[@]}"
+do
+	if [[ -f "${candidateRoot}/${filename}" ]]; then
+		cp "${candidateRoot}/${filename}" "${targetRoot}/${filename}"
+	fi
+done
+
+declare -a wiki_link_affected=("errors/modules/PDF-hul/pdf-hul-73-bug-size-int.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-52-govdocs-983827.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-79-govdocs-095305.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-43-govdocs-486355.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-34-govdocs-259511.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-82-govdocs-333472.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-51-govdocs-085551.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-76-372051162.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-61-CERN-2005-009.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-29-govdocs-375118.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-13-govdocs-346874.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-9-govdocs-065694.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-1-govdocs-519846.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-86-govdocs-445892.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-62-567147525.pdf.jhove.xml"
+				"errors/modules/PDF-hul/corruptionOneByteMissing.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-76-govdocs-289573.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-35-govdocs-156429.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-5-govdocs-659152.pdf.jhove.xml"
+				"errors/modules/PDF-hul/pdf-hul-49-32932439X.pdf.jhove.xml"
+				"errors/modules/JPEG2000-hul/signature_corrupted.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/隨機中國文字.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1984.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/missing_null_terminator_in_urlbox.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/ランダム日本語テキスト.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/invalid_character_in_xml.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/is_codestream.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/truncated_at_byte_5000.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1971.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/openJPEG15.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/meth_is_2_no_icc.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1999.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/is_jpeg.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1920.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/triggerUnboundLocalError.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/README.md.jhove.xml"
+				"errors/modules/JPEG2000-hul/last_byte_missing.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1951.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/is_jpm.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1961.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-2011.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/empty.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/height_image_header_damaged.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/palettedImage.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1937.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/data_missing_in_last_tilepart.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-1911.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/bitwiser-icc-corrupted-tagcount-2021.jp2.jhove.xml"
+				"errors/modules/JPEG2000-hul/reference.jp2.jhove.xml"
+				"regression/modules/JPEG-hul/19_e190014.jpg.jhove.xml"
+				"regression/modules/PDF-hul/issue_662.pdf.jhove.xml"
+				"regression/modules/PDF-hul/pdf-hul-55-govdocs-616137.pdf.jhove.xml"
+				"regression/modules/PDF-hul/class-cast.pdf.jhove.xml"
+				"regression/modules/PDF-hul/null-string.pdf.jhove.xml"
+				"regression/modules/PDF-hul/issue_473_a.pdf.jhove.xml"
+				"regression/modules/PDF-hul/extensions-adbe-other.pdf.jhove.xml"
+				"regression/modules/PDF-hul/pdf-hul-59-govdocs-681811.pdf.jhove.xml"
+				"regression/modules/PDF-hul/issue_645.pdf.jhove.xml"
+				"regression/modules/PDF-hul/null-string-sig-2.pdf.jhove.xml"
+				"regression/modules/PDF-hul/issue_531.pdf.jhove.xml"
+				"regression/modules/PDF-hul/null-string-sig-1.pdf.jhove.xml"
+				"regression/modules/PDF-hul/pdf-hul-65-847453723.pdf.jhove.xml"
+				"regression/modules/PDF-hul/pdf-hul-40-govdocs-088919.pdf.jhove.xml"
+				"examples/modules/PDF-hul/AA_Banner.pdf.jhove.xml"
+				"examples/modules/TIFF-hul/fax2d.g3.jhove.xml"
+				"examples/modules/TIFF-hul/chase-tif-f.tif.jhove.xml"
+				"examples/modules/TIFF-hul/g3test.g3.jhove.xml"
+				"examples/modules/TIFF-hul/smallliz.tif.jhove.xml"
+				"examples/modules/TIFF-hul/zackthecat.tif.jhove.xml"
+				"examples/modules/HTML-hul/Validate3.2.html.jhove.xml"
+				"examples/modules/HTML-hul/Validate4.0Trans.html.jhove.xml"
+				"examples/modules/HTML-hul/Validate4.0Frameset.html.jhove.xml"
+				"examples/modules/HTML-hul/Validate4.01Trans.html.jhove.xml"
+				"examples/modules/HTML-hul/Validate4.01Frameset.html.jhove.xml")
+for filename in "${wiki_link_affected[@]}"
 do
 	if [[ -f "${candidateRoot}/${filename}" ]]; then
 		cp "${candidateRoot}/${filename}" "${targetRoot}/${filename}"
