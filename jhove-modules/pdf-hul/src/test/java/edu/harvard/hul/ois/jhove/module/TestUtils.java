@@ -71,7 +71,7 @@ public final class TestUtils {
 	 *            the expected well formed value
 	 * @param expctVld
 	 *            the expected is valid value
-	 * @param message
+	 * @param messageId
 	 *            a JHOVE validation string message expected to be found in the
 	 *            list of validation messages. If this parameter is null the
 	 *            test isn't performed.
@@ -80,8 +80,8 @@ public final class TestUtils {
 	 */
 	public static RepInfo testValidateResource(final Module module,
 			final String resToTest, final int expctWllFrmd, final int expctVld,
-			final String message) throws URISyntaxException {
-		return testValidateResource(module, resToTest, expctWllFrmd, expctVld, message, true);
+			final String messageId) throws URISyntaxException {
+		return testValidateResource(module, resToTest, expctWllFrmd, expctVld, messageId, true);
 	}
 
 	/**
@@ -109,11 +109,11 @@ public final class TestUtils {
 	 */
 	public static RepInfo testValidateResource(final Module module,
 			final String resToTest, final int expctWllFrmd, final int expctVld,
-			final String expctMessage, boolean messMustBePresent ) throws URISyntaxException {
+			final String expctMessageId, boolean messMustBePresent ) throws URISyntaxException {
 		File toTest = new File(TestUtils.class.getResource(resToTest).toURI());
 
 		return testValidateFile(module, toTest, expctWllFrmd, expctVld,
-				expctMessage, messMustBePresent);
+				expctMessageId, messMustBePresent);
 	}
 
 	/**
@@ -141,40 +141,40 @@ public final class TestUtils {
 
 	public static RepInfo testValidateFile(final Module module,
 			final File fileToTest, final int expctWllFrmd, final int expctVld,
-			final String message) {
-		return testValidateFile(module, fileToTest, expctWllFrmd, expctVld, message, true);
+			final String messageId) {
+		return testValidateFile(module, fileToTest, expctWllFrmd, expctVld, messageId, true);
 	}
 
 	public static RepInfo testValidateFile(final Module module,
 			final File fileToTest, final int expctWllFrmd, final int expctVld,
-			final String message, boolean messMustBePresent) {
+			final String messageId, boolean messMustBePresent) {
 		RepInfo info = parseTestFile(module, fileToTest);
-		testResult(info, expctWllFrmd, expctVld, message, messMustBePresent);
+		testResult(info, expctWllFrmd, expctVld, messageId, messMustBePresent);
 		return info;
 	}
 
 	private static void testResult(final RepInfo info, final int expctWllFrmd,
-			final int expctVld, final String message, boolean messMustBePresent) {
+			final int expctVld, final String messageId, boolean messMustBePresent) {
 		testWellFormed(info, expctWllFrmd);
 		testIsValid(info, expctVld);
-		if (message == null) {
+		if (messageId == null) {
 			return;
 		}
-		Message jhoveMessage = getMessageIfPresent(info, message);
+		Message jhoveMessage = getMessageIfPresent(info, messageId);
 		if (messMustBePresent) {
 			if (jhoveMessage == null) {
 				System.out.println(String.format(
-						"Expected message: %s, not found.", message));
+						"Expected message ID: %s, not found.", messageId));
 				outputMessages(info);
 			}
-			assertTrue("Expected message: " + message, jhoveMessage != null);
+			assertTrue("Expected message ID: " + messageId, jhoveMessage != null);
 		} else {
 			if (jhoveMessage != null) {
 				System.out.println(String.format(
-						"Unexpected message: %s, found.", jhoveMessage.getMessage()));
+						"Unexpected message ID: %s, found.", jhoveMessage.getMessage()));
 				outputMessages(info);
 			}
-			assertTrue("Unexpected message: " + message, jhoveMessage == null);
+			assertTrue("Unexpected message ID: " + messageId, jhoveMessage == null);
 		}
 	}
 
@@ -238,9 +238,9 @@ public final class TestUtils {
 		assertEquals(message, expctVld, info.getValid());
 	}
 	
-	private static Message getMessageIfPresent(final RepInfo info, final String expctMessage) {
+	private static Message getMessageIfPresent(final RepInfo info, final String expectedId) {
 		for (Message message : info.getMessage()) {
-			if (message.getMessage().equals(expctMessage)) {
+			if (message.getId().equals(expectedId)) {
 				return message;
 			}
 		}

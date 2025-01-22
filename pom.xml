@@ -202,11 +202,36 @@
             </goals>
           </execution>
           <execution>
-              <id>generate-code-coverage-report</id>
-              <phase>test</phase>
-              <goals>
-                  <goal>report</goal>
-              </goals>
+            <id>generate-code-coverage-report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>templates/docker</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -233,6 +258,7 @@
 
   <dependencies>
   </dependencies>
+
   <profiles>
     <profile>
       <id>jdk9</id>
@@ -273,13 +299,13 @@
       </build>
       <dependencies>
 
-      <!-- https://mvnrepository.com/artifact/org.sonarsource.java/sonar-jacoco-listeners -->
-      <dependency>
-        <groupId>org.sonarsource.java</groupId>
-        <artifactId>sonar-jacoco-listeners</artifactId>
-        <version>5.14.0.18788</version>
-        <scope>test</scope>
-      </dependency>
+        <!-- https://mvnrepository.com/artifact/org.sonarsource.java/sonar-jacoco-listeners -->
+        <dependency>
+          <groupId>org.sonarsource.java</groupId>
+          <artifactId>sonar-jacoco-listeners</artifactId>
+          <version>5.14.0.18788</version>
+          <scope>test</scope>
+        </dependency>
 
       </dependencies>
     </profile>
@@ -405,7 +431,6 @@
         </repository>
       </distributionManagement>
     </profile>
-
   </profiles>
 
 </project>

@@ -1,18 +1,14 @@
 # See https://docs.docker.com/engine/userguide/eng-image/multistage-build/
 # First build the app on a maven open jdk 11 container
-ARG JHOVE_VERSION=1.33.0-SNAPSHOT
-FROM maven:3-eclipse-temurin-11-alpine AS dev-builder
+ARG JHOVE_VERSION=1.32
+FROM eclipse-temurin:11-jdk-alpine AS app-installer
 ARG JHOVE_VERSION
 ENV JHOVE_VERSION=${JHOVE_VERSION}
 
-RUN apk add --no-cache git
-WORKDIR /build
-
-# Clone the repo, checkout the revision and build the application
-RUN git clone https://github.com/openpreserve/jhove.git
-
-WORKDIR /build/jhove
-RUN git checkout v${JHOVE_VERSION} && mvn clean package && java -jar jhove-installer/target/jhove-xplt-installer-${JHOVE_VERSION}.jar docker-install.xml
+WORKDIR /tmp
+COPY docker-install.xml .
+RUN wget -O /tmp/jhove-installer.jar https://software.openpreservation.org/releases/jhove/jhove-${JHOVE_VERSION}.jar
+RUN java -jar jhove-installer.jar docker-install.xml
 
 # Now build a Java JRE for the Alpine application image
 # https://github.com/docker-library/docs/blob/master/eclipse-temurin/README.md#creating-a-jre-using-jlink
@@ -48,9 +44,12 @@ RUN addgroup -S jhove && adduser -S -G jhove -h /opt/jhove jhove
 RUN mkdir --parents /var/opt/jhove/logs && chown -R jhove:jhove /var/opt/jhove
 
 USER jhove
-
 WORKDIR /opt/jhove
+
 # Copy the application from the previous stage
-COPY --from=dev-builder /opt/jhove/ /opt/jhove/
+COPY --from=app-installer /opt/jhove/ /opt/jhove/
+
+WORKDIR /data
+VOLUME [ "/data" ]
 
 ENTRYPOINT ["/opt/jhove/jhove"]

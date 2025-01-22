@@ -380,8 +380,8 @@ public class PdfModule extends ModuleBase {
      ******************************************************************/
 
     private static final String NAME = "PDF-hul";
-    private static final String RELEASE = "1.12.7";
-    private static final int[] DATE = { 2024, 8, 22 };
+    private static final String RELEASE = "1.12.8";
+    private static final int[] DATE = { 2025, 1, 24 };
     private static final String[] FORMAT = { "PDF",
             "Portable Document Format" };
     private static final String COVERAGE = "PDF 1.0-1.6; "
@@ -634,7 +634,9 @@ public class PdfModule extends ModuleBase {
 
         _signature.add(new ExternalSignature(EXT, SignatureType.EXTENSION,
                 SignatureUseType.OPTIONAL));
-        _signature.add(new InternalSignature(PdfHeader.PDF_SIG_HEADER,
+        _signature.add(new InternalSignature(PdfHeader.PDF_1_SIG_HEADER,
+                SignatureType.MAGIC, SignatureUseType.MANDATORY, 0));
+        _signature.add(new InternalSignature(PdfHeader.PDF_2_SIG_HEADER,
                 SignatureType.MAGIC, SignatureUseType.MANDATORY, 0));
 
         doc = new Document(
@@ -1043,23 +1045,18 @@ public class PdfModule extends ModuleBase {
         _nFonts = 0;
     }
 
-    protected boolean parseHeader(RepInfo info) throws IOException {
+    protected boolean parseHeader(RepInfo info) {
         PdfHeader header = null;
         try {
             header = PdfHeader.parseHeader(_parser);
-        } catch (PdfMalformedException e) {
-            info.setWellFormed(false);
-            info.setMessage(new ErrorMessage(MessageConstants.PDF_HUL_155, 0L)); // PDF-HUL-155
+        } catch (PdfException e) {
+            if (e instanceof PdfInvalidException) {
+                info.setValid(false);
+            } else {
+                info.setWellFormed(false);
+            }
+            info.setMessage(new ErrorMessage(e.getJhoveMessage(), 0L)); // PDF-HUL-155
             return false;
-        }
-        if (header == null) {
-            info.setWellFormed(false);
-            info.setMessage(new ErrorMessage(MessageConstants.PDF_HUL_137, 0L)); // PDF-HUL-137
-            return false;
-        }
-        if (!header.isVersionValid()) {
-            info.setValid(false);
-            info.setMessage(new ErrorMessage(MessageConstants.PDF_HUL_148, 0L)); // PDF-HUL-148
         }
         _version = header.getVersionString();
         _pdfACompliant = header.isPdfACompliant();
@@ -2031,9 +2028,9 @@ public class PdfModule extends ModuleBase {
             // CreationDate requires string-to-date conversion
             // ModDate does too
             addDateProperty(_docInfoDict, _docInfoList, DICT_KEY_CREATION_DATE,
-                    PROP_NAME_CREATION_DATE);
+                    PROP_NAME_CREATION_DATE, info);
             addDateProperty(_docInfoDict, _docInfoList, DICT_KEY_MODIFIED_DATE,
-                    PROP_NAME_MODIFIED_DATE);
+                    PROP_NAME_MODIFIED_DATE, info);
             addStringProperty(_docInfoDict, _docInfoList, DICT_KEY_TRAPPED,
                     PROP_NAME_TRAPPED);
         } catch (PdfException e) {
@@ -4333,25 +4330,40 @@ public class PdfModule extends ModuleBase {
      * with a string value, to a specified List.
      */
     protected void addDateProperty(PdfDictionary dict, List<Property> propList,
-            String key, String propName) throws PdfInvalidException {
+                 String key, String propName, final RepInfo info) {
         if (_encrypted) {
             String propText = ENCRYPTED;
             propList.add(new Property(propName, PropertyType.STRING, propText));
-        } else {
-            PdfObject propObject = dict.get(key);
-            if (propObject instanceof PdfSimpleObject) {
-                Token tok = ((PdfSimpleObject) propObject).getToken();
-                if (tok instanceof Literal) {
-                    Literal lit = (Literal) tok;
-                    if (!lit.getValue().isEmpty()) {
-                        Date propDate = lit.parseDate();
-                        if (propDate != null) {
-                            propList.add(new Property(propName, PropertyType.DATE, propDate));
-                        }
-                    }
+            return;
+        }
+        PdfObject propObject = dict.get(key);
+        if (propObject == null) {
+            return;
+        }
+        Literal lit = getDateLiteral(propObject);
+        if (lit != null && !lit.getValue().isEmpty()) {
+            try {
+                Date propDate = lit.parseDate();
+                if (propDate != null) {
+                    propList.add(new Property(propName, PropertyType.DATE, propDate));
+                    return;
                 }
+            } catch (PdfInvalidException e) {
+                info.setValid(false);
+                info.setMessage(new ErrorMessage(JhoveMessages.getMessageInstance(
+                    MessageConstants.PDF_HUL_133.getId(), MessageConstants.PDF_HUL_133.getMessage(), "For date property: " + propName.trim() + ", value: " + lit.getValue().trim()), _parser.getOffset()));
             }
         }
+    }
+
+    private Literal getDateLiteral(final PdfObject obj) {
+        if (obj instanceof PdfSimpleObject) {
+            Token tok = ((PdfSimpleObject) obj).getToken();
+            if (tok instanceof Literal) {
+                return (Literal) tok;
+            }
+        }
+        return null;
     }
 
     /*
