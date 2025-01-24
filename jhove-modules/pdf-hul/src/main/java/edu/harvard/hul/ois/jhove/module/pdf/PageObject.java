@@ -6,6 +6,7 @@
 package edu.harvard.hul.ois.jhove.module.pdf;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -18,7 +19,7 @@ import edu.harvard.hul.ois.jhove.module.PdfModule;
  */
 public class PageObject extends DocNode 
 {
-    private List<PdfStream> _contentStreams = null;  // contents of the page; may be null
+    private List<PdfStream> _contentStreams = new ArrayList<>();  // contents of the page, defaults to empty
 
     /**
      *  Superclass constructor.
@@ -147,6 +148,18 @@ public class PageObject extends DocNode
     {
         return retrieveAndCheckRectangle(this._dict, "BleedBox",
                 MessageConstants.PDF_HUL_25); // PDF-HUL-25
+    }
+
+    public void checkTextStreams(RandomAccessFile raf) throws IOException {
+        if (_contentStreams == null) {
+            return;
+        }
+        for (PdfStream pdfStream : _contentStreams) {
+            Stream stream = pdfStream.getStream();
+            byte[] data = new byte[(int) stream.getLength()];
+            stream.initRead(raf);
+            stream.read(data);
+        }
     }
 
     private static PdfArray retrieveAndCheckRectangle(final PdfDictionary dict,

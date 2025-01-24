@@ -82,3 +82,14 @@ do
 		cp "${candidateRoot}/${filename}" "${targetRoot}/${filename}"
 	fi
 done
+
+# Copy the results of the test files fixed by the addition of basic text stream validation
+declare -a pdf_version_affected=("errors/modules/PDF-hul/T02-05-01_009_Missing_open_paranthesis.pdf.jhove.xml"
+				"errors/modules/PDF-hul/T02-05-01_010_Missing_closing_paranthesis.pdf.jhove.xml"
+				"errors/modules/PDF-hul/T02-05-01_011_paranthesis-substituted-with-brackets.pdf.jhove.xml")
+for filename in "${pdf_version_affected[@]}"
+do
+	if [[ -f "${candidateRoot}/${filename}" ]]; then
+		cp "${candidateRoot}/${filename}" "${targetRoot}/${filename}"
+	fi
+done

@@ -96,6 +96,7 @@ import edu.harvard.hul.ois.jhove.module.pdf.PdfProfile;
 import edu.harvard.hul.ois.jhove.module.pdf.PdfSimpleObject;
 import edu.harvard.hul.ois.jhove.module.pdf.PdfStream;
 import edu.harvard.hul.ois.jhove.module.pdf.PdfStrings;
+import edu.harvard.hul.ois.jhove.module.pdf.PdfTextStream;
 import edu.harvard.hul.ois.jhove.module.pdf.PdfXMPSource;
 import edu.harvard.hul.ois.jhove.module.pdf.StringValuedToken;
 import edu.harvard.hul.ois.jhove.module.pdf.TaggedProfile;
@@ -867,8 +868,10 @@ public class PdfModule extends ModuleBase {
         }
         findImages(info);
         findFonts(info);
+        checkPageTextStreams(info);
 
         /* Object is well-formed PDF. */
+
 
         // Calculate checksums if not already present
         checksumIfRafNotCopied(info, raf);
@@ -1050,12 +1053,13 @@ public class PdfModule extends ModuleBase {
         try {
             header = PdfHeader.parseHeader(_parser);
         } catch (PdfException e) {
+            info.setMessage(new ErrorMessage(e.getJhoveMessage(), 0L)); // PDF-HUL-155
             if (e instanceof PdfInvalidException) {
                 info.setValid(false);
+                return true;
             } else {
                 info.setWellFormed(false);
             }
-            info.setMessage(new ErrorMessage(e.getJhoveMessage(), 0L)); // PDF-HUL-155
             return false;
         }
         _version = header.getVersionString();
@@ -2195,17 +2199,14 @@ public class PdfModule extends ModuleBase {
                     break;
                 }
                 // Get the streams for the page and walk through them
-                List<PdfStream> streams = page.getContentStreams();
-                if (streams != null) {
-                    ListIterator<PdfStream> streamIter = streams.listIterator();
-                    while (streamIter.hasNext()) {
-                        PdfStream stream = streamIter.next();
-                        String specStr = stream.getFileSpecification();
-                        if (specStr != null) {
-                            Property prop = new Property(PROP_NAME_FILE,
-                                    PropertyType.STRING, specStr);
-                            _extStreamsList.add(prop);
-                        }
+                ListIterator<PdfStream> streamIter = page.getContentStreams().listIterator();
+                while (streamIter.hasNext()) {
+                    PdfStream stream = streamIter.next();
+                    String specStr = stream.getFileSpecification();
+                    if (specStr != null) {
+                        Property prop = new Property(PROP_NAME_FILE,
+                                PropertyType.STRING, specStr);
+                        _extStreamsList.add(prop);
                     }
                 }
             }
@@ -2244,14 +2245,11 @@ public class PdfModule extends ModuleBase {
                     break;
                 }
                 // Get the streams for the page and walk through them
-                List<PdfStream> streams = page.getContentStreams();
-                if (streams != null) {
-                    ListIterator<PdfStream> streamIter = streams.listIterator();
-                    while (streamIter.hasNext()) {
-                        PdfStream stream = streamIter.next();
-                        Filter[] filters = stream.getFilters();
-                        extractFilters(filters, stream);
-                    }
+                ListIterator<PdfStream> streamIter = page.getContentStreams().listIterator();
+                while (streamIter.hasNext()) {
+                    PdfStream stream = streamIter.next();
+                    Filter[] filters = stream.getFilters();
+                    extractFilters(filters);
                 }
             }
         } catch (PdfException e) {
@@ -2271,7 +2269,7 @@ public class PdfModule extends ModuleBase {
      * Returns the filter string whether it's added or not,
      * or null if there are no filters.
      */
-    protected String extractFilters(Filter[] filters, PdfStream stream) {
+    protected String extractFilters(Filter[] filters) {
         /*
          * Concatenate the names into a string of names separated
          * by spaces.
@@ -2390,8 +2388,7 @@ public class PdfModule extends ModuleBase {
                                     String mimeType = imageMimeFromFilters(
                                             filters);
                                     niso.setMimeType(mimeType);
-                                    String filt = extractFilters(filters,
-                                            (PdfStream) xob);
+                                    String filt = extractFilters(filters);
                                     if (filt != null) {
                                         // If the filter is one which the NISO
                                         // schema
@@ -3510,11 +3507,45 @@ public class PdfModule extends ModuleBase {
         }
     }
 
+    protected void checkPageTextStreams(final RepInfo info) {
+        if (_encrypted) {
+            // Don't bother trying to check text streams if the file is encrypted
+            return;
+        }
+        _docTreeRoot.startWalk();
+        try {
+            for (;;) {
+                // Get all the page objects in the document sequentially
+                PageObject page = _docTreeRoot.nextPageObject();
+                if (page == null) {
+                    break;
+                }
+                // Get the streams for the page and walk through them
+                ListIterator<PdfStream> streamIter = page.getContentStreams().listIterator();
+                while (streamIter.hasNext()) {
+                    PdfTextStream textStream = new PdfTextStream(streamIter.next(), _raf);
+                    textStream.validate();
+                }
+            }
+        } catch (PdfException e) {
+            e.disparage(info);
+            info.setMessage(new ErrorMessage(e.getJhoveMessage()));
+        } catch (IOException e) {
+            info.setWellFormed(false);
+            String subMess = e.getMessage();
+            JhoveMessage message = JhoveMessages.getMessageInstance(
+                    MessageConstants.PDF_HUL_163, subMess);
+            info.setMessage(new ErrorMessage(message)); // PDF-HUL-102
+        } catch (NegativeArraySizeException e) {
+            // Do nothing with this now as it seems to be a bug in the xref stream handler
+        }
+    }
+
     /*
      * Build up a property for one of the kinds of fonts
      * in the file.
      */
-    protected Property buildFontProperty(String name, Map map, int fontType) {
+    protected Property buildFontProperty(String name, Map<Integer, PdfObject> map, int fontType) {
         List<Property> fontList = new LinkedList<Property>(); // list of fonts
         Iterator<PdfObject> fontIter = map.values().iterator();
         while (fontIter.hasNext()) {

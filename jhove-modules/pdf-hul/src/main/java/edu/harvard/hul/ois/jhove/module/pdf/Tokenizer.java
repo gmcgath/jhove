@@ -64,10 +64,11 @@ public abstract class Tokenizer
     private static final int LF  = 0x0A;
     private static final int FF  = 0x0C;
     private static final int CR  = 0x0D;
+    private static final int SP  = 0x20;
 
     /** Whitespace characters codes. */
-    private static final int WHITESPACES [] = {
-        NUL, HT, LF, FF, CR, ' '
+    public static final Character[] WHITESPACES = {
+        NUL, HT, LF, FF, CR, SP
     };
 
     /** Delimiting characters codes. */

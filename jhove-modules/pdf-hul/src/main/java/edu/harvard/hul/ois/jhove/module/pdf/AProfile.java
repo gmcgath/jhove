@@ -615,47 +615,43 @@ public final class AProfile extends PdfProfile
                 
                 // Check content streams for  resources
                 if (docNode instanceof PageObject) {
-                    List<PdfStream> streams = 
-                        ((PageObject) docNode).getContentStreams ();
-                    if (streams != null) {
-                        Iterator<PdfStream> iter = streams.listIterator ();
-                        while (iter.hasNext ()) {
-                            PdfStream stream = iter.next ();
-                            PdfDictionary dict = stream.getDict ();
-                            PdfDictionary rs = 
-                                (PdfDictionary) 
-                                    _module.resolveIndirectObject(dict.get ("Resources"));
-                            if (rs != null) {
-                                PdfDictionary cs = (PdfDictionary)
-                                    _module.resolveIndirectObject
-                                        (rs.get ("ColorSpace"));
-                                if (!colorSpaceOK (cs)) {
-                                    return false;
-                                }
-
-                                PdfDictionary gs = (PdfDictionary)
-                                    _module.resolveIndirectObject
-                                        (rs.get ("ExtGState"));
-                                if (!extGStateOK (gs)) {
-                                    return false;
-                                }
-
-                                PdfDictionary xo = (PdfDictionary)
-                                    _module.resolveIndirectObject
-                                        (rs.get ("XObject"));
-                                if (!xObjectsOK (xo)) {
-                                    return false;
-                                }
+                    ListIterator<PdfStream> streamIter = ((PageObject) docNode).getContentStreams().listIterator();
+                    while (streamIter.hasNext ()) {
+                        PdfStream stream = streamIter.next ();
+                        PdfDictionary dict = stream.getDict ();
+                        PdfDictionary rs =
+                            (PdfDictionary)
+                                _module.resolveIndirectObject(dict.get ("Resources"));
+                        if (rs != null) {
+                            PdfDictionary cs = (PdfDictionary)
+                                _module.resolveIndirectObject
+                                    (rs.get ("ColorSpace"));
+                            if (!colorSpaceOK (cs)) {
+                                return false;
                             }
-                            // Also check for filters
-                            PdfObject filters =
-                                dict.get ("Filter");
-                            if (hasFilters (filters, excludedFilters)) {
+
+                            PdfDictionary gs = (PdfDictionary)
+                                _module.resolveIndirectObject
+                                    (rs.get ("ExtGState"));
+                            if (!extGStateOK (gs)) {
+                                return false;
+                            }
+
+                            PdfDictionary xo = (PdfDictionary)
+                                _module.resolveIndirectObject
+                                    (rs.get ("XObject"));
+                            if (!xObjectsOK (xo)) {
                                 return false;
                             }
                         }
+                        // Also check for filters
+                        PdfObject filters =
+                            dict.get ("Filter");
+                        if (hasFilters (filters, excludedFilters)) {
+                            return false;
+                        }
                     }
-                    
+
                     // Also check page objects for annotations.
                     // Must be one of the prescribed types, but not
                     // Movie, Sound, or FileAttachment.
