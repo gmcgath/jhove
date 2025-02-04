@@ -86,6 +86,17 @@ if [[ -f "${candidateRoot}/errors/modules/JPEG2000-hul/is_jpx.jp2.jhove.xml" ]];
 fi
 if [[ -f "${candidateRoot}/examples/modules/JPEG2000-hul/ROITest.jpx.jhove.xml" ]]; then
 	cp "${candidateRoot}/examples/modules/JPEG2000-hul/ROITest.jpx.jhove.xml" "${targetRoot}/examples/modules/JPEG2000-hul/ROITest.jpx.jhove.xml"
+
+# Update release details for PDF module
+find "${targetRoot}" -type f -name "*.pdf.jhove.xml" -exec sed -i 's/<reportingModule release="1.12.7" date="2024-08-22">PDF-hul<\/reportingModule>/<reportingModule release="1.12.8" date="2025-01-24">PDF-hul<\/reportingModule>/' {} \;
+find "${targetRoot}" -type f -name "audit.jhove.xml" -exec sed -i 's/<module release="1.12.7">PDF-hul<\/module>/<module release="1.12.8">PDF-hul<\/module>/' {} \;
+find "${targetRoot}" -type f -name "audit-PDF-hul.jhove.xml" -exec sed -i 's/<release>1.12.7<\/release>/<release>1.12.8<\/release>/' {} \;
+find "${targetRoot}" -type f -name "audit-PDF-hul.jhove.xml" -exec sed -i 's/2024-08-22/2025-01-24/' {} \;
+
+# Fix the results affected by the improvements to date handling in the PDF module
+sed -i 's/<message offset/<message subMessage="For date property: CreationDate, value: Tue Feb 03 16:19:57 2004" offset/' "${targetRoot}/examples/modules/PDF-hul/AA_Banner.pdf.jhove.xml"
+if [[ -f "${candidateRoot}/errors/modules/PDF-hul/pdf-hul-9-govdocs-065694.pdf.jhove.xml" ]]; then
+	cp "${candidateRoot}/errors/modules/PDF-hul/pdf-hul-9-govdocs-065694.pdf.jhove.xml" "${targetRoot}/errors/modules/PDF-hul/pdf-hul-9-govdocs-065694.pdf.jhove.xml"
 fi
 
 # Insert new PDF-2.x signature nodes into the PDF audit XML files
