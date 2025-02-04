@@ -201,6 +201,8 @@ public enum MessageConstants {
     public static final JhoveMessage PDF_HUL_160 = messageFactory.getMessage("PDF-HUL-160");
     public static final JhoveMessage PDF_HUL_161 = messageFactory.getMessage("PDF-HUL-161");
     public static final JhoveMessage PDF_HUL_162 = messageFactory.getMessage("PDF-HUL-162");
+    public static final JhoveMessage PDF_HUL_163 = messageFactory.getMessage("PDF-HUL-163");
+    public static final JhoveMessage PDF_HUL_163_SUB = messageFactory.getMessage("PDF-HUL-163-SUB");
 
     /**
      * Logger Messages

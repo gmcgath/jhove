@@ -113,3 +113,13 @@ do
 		cp "${candidateRoot}/${filename}" "${targetRoot}/${filename}"
 	fi
 done
+
+# Copy the regression test files affected by the change to object count checking against size
+declare -a xref_size_affected=("errors/modules/PDF-hul/pdf-hul-73-bug-size-int.pdf.jhove.xml"
+				"regression/modules/PDF-hul/issue_531.pdf.jhove.xml")
+for filename in "${xref_size_affected[@]}"
+do
+	if [[ -f "${candidateRoot}/${filename}" ]]; then
+		cp "${candidateRoot}/${filename}" "${targetRoot}/${filename}"
+	fi
+done
