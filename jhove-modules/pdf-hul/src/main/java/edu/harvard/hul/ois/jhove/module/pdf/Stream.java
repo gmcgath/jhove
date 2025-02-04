@@ -6,9 +6,13 @@
 package edu.harvard.hul.ois.jhove.module.pdf;
 
 //import edu.harvard.hul.ois.jhove.*;
-import java.io.*;
 //import java.util.*;
 //import java.util.zip.InflaterInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 /**
  *  Class to encapsulate a stream token.  The content of the
@@ -90,6 +94,9 @@ public class Stream
         _filters = filters;
     }
 
+    public byte[] getRawData() {
+        return Arrays.copyOf(_sdata, _sdata.length);
+    }
 
     /** Prepares for reading the Stream. 
      *  If the filter List includes one which we don't support, throws a
