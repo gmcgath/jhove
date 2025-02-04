@@ -106,7 +106,7 @@ public class HtmlModule extends ModuleBase {
 
     private static final String NAME = "HTML-hul";
     private static final String RELEASE = "1.4.5";
-    private static final int[] DATE = { 2024, 11, 27 };
+    private static final int[] DATE = { 2025, 02, 05 };
     private static final String[] FORMAT = { "HTML" };
     private static final String COVERAGE = "HTML 3.2, HTML 4.0 Strict,"
             + "HTML 4.0 Transitional, HTML 4.0 Frameset, "
