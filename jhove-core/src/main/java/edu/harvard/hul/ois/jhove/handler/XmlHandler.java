@@ -20,6 +20,9 @@
 
 package edu.harvard.hul.ois.jhove.handler;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -352,11 +355,6 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
             _writer.println(margn2
                     + element("reportingModule", attr2, this.reportingModule));
         }
-        /*
-         * else { String [][] attr2 = { {"severity", "error"} }; _writer.println
-         * (margn2 + element ("message", attr2,
-         * "file not found or not readable")); }
-         */
         Date date = info.getCreated();
         if (date != null) {
             _writer.println(margn2 + element("created", toDateTime(date)));
@@ -4449,51 +4447,41 @@ public class XmlHandler extends edu.harvard.hul.ois.jhove.HandlerBase
                 element(elementName, attributes, String.valueOf(timeDesc.getSamples())));
     }
 
-    /*
-     * Clean up a URI string by escaping forbidden characters. We assume
-     * (perhaps dangerously) that a % is the start of an already escaped
-     * hexadecimal sequence.
+    /**
+     * Returns a path normalised URI from the presented string path.@interface
+     * Solution based upon the follwing post from Eugene Yokota:
+     * https://eed3si9n.com/encoding-file-path-as-URI-reference/
      */
-    private String cleanURIString(String uri) {
-        StringBuffer sb = new StringBuffer(uri.length() * 2);
-        boolean change = false;
-        for (int i = 0; i < uri.length(); i++) {
-            char c = uri.charAt(i);
-            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
-                    || (c >= '0' && c <= '9') || (c == '%') || // assume it's an
-                                                               // escape
-                    ("-_.!~*'();/?:@=+$,".indexOf(c) >= 0)) {
-                sb.append(c);
-            } else {
-                int cval = c;
-
-                // More significant hex digit
-                int mshd = (cval >> 4);
-                if (mshd >= 10) {
-                    mshd += 'A' - 10;
+    private static final String cleanURIString(final String path) {
+        File input = new File(path);
+        final boolean isWindows = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows");
+        final String fileScheme = "file";
+        try {
+            if (isWindows && !path.isEmpty() && path.startsWith(Character.toString(File.separatorChar))) {
+                if (path.startsWith("\\")) {
+                    return new URI(fileScheme, normaliseToSlash(path), null).toString();
                 } else {
-                    mshd += '0';
+                    return new URI(fileScheme, "", normaliseToSlash(path), null).toString();
                 }
-                sb.append('%');
-                sb.append((char) mshd);
-
-                // Less significant hex digit
-                int lshd = (cval & 0X0F);
-                if (lshd >= 10) {
-                    lshd += 'A' - 10;
-                } else {
-                    lshd += '0';
-                }
-                sb.append((char) lshd);
-                change = true;
+            } else if (input.isAbsolute()) {
+                return new URI(fileScheme, "", normaliseToSlash(ensureHeadSlash(input.getAbsolutePath())), null)
+                        .toString();
             }
+            return new URI(null, normaliseToSlash(path), null).toString();
+        } catch (URISyntaxException e) {
+            // If this fails simply return the original path
+            return path;
         }
-        // For efficiency, return the original string
-        // if nothing changed.
-        if (change) {
-            return sb.toString();
-        }
-        return uri;
+    }
+
+    private static final String ensureHeadSlash(final String name) {
+        return (!name.isEmpty() && name.startsWith(Character.toString(File.separatorChar)))
+                ? Character.toString(File.separatorChar) + name
+                : name;
+    }
+
+    private static final String normaliseToSlash(final String name) {
+        return (File.separatorChar == '/') ? name : name.replace(File.separatorChar, '/');
     }
 
     /** Appends a Rational value to a StringBuffer */

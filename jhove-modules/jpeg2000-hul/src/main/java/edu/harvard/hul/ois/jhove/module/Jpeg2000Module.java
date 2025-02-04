@@ -105,8 +105,8 @@ public class Jpeg2000Module extends ModuleBase {
      ******************************************************************/
 
     private static final String NAME = "JPEG2000-hul";
-    private static final String RELEASE = "1.4.4";
-    private static final int[] DATE = { 2023, 03, 16 };
+    private static final String RELEASE = "1.4.5";
+    private static final int[] DATE = { 2025, 02, 05 };
     private static final String[] FORMAT = { "JPEG 2000", "JP2", "JPX" };
     private static final String COVERAGE = "JP2 (ISO/IEC 15444-1:2000/"
             + "ITU-T Rec. T.800 (200)), JPX (ISO/IEC 15444-2:2004)";
