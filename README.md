@@ -18,7 +18,7 @@ Copyright 2003-2012 by JSTOR and the President and Fellows of Harvard College,
 JHOVE is made available under the
 [GNU Lesser General Public License (LGPL)](http://www.gnu.org/licenses/lgpl.html).
 
-Rev. 1.32.0, 2024-09-12
+Rev. 1.32.1, 2025-02-06
 
 JHOVE Homepage
 --------------
