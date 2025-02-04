@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.openpreservation.jhove</groupId>
     <artifactId>jhove</artifactId>
-    <version>1.32.1-RC1</version>
+    <version>1.32.1</version>
   </parent>
 
   <artifactId>jhove-installer</artifactId>
-  <version>1.32.1-RC1</version>
+  <version>1.32.1</version>
   <name>JHOVE Installer</name>
   <description>Maven-built IzPack installer for JHOVE.</description>
 
