@@ -109,26 +109,42 @@ public class ContCodestream {
         }
         try {
             while (lengthLeft > 0) {
-                // "Marker segments" are followed by a length parameter,
-                // but "markers" aren't.  
+                // Look for the start of a marker (0xFF).
                 int ff = ModuleBase.readUnsignedByte (_dstream, _module);
                 if (ff != 0XFF) {
                     info.setMessage (new ErrorMessage(MessageConstants.JPEG2000_HUL_8));
                     info.setWellFormed (false);
                     return false;
                 }
+                // Now read the type of marker (one byte).
                 int marker = ModuleBase.readUnsignedByte (_dstream, _module);
-                if (marker == 0X4F) {
+                if (marker == SOC) {
                     // we got the SOC marker, as expected
                     socSeen = true;
                 }
+                // Some markers are followed by additional data called
+                // parameters. The marker together with its (optional)
+                // parameters are called a marker segment. We now prepare a
+                // parser for the specific type of marker segment we
+                // encountered.
                 MarkerSegment ms = MarkerSegment.markerSegmentMaker (marker);
                 ms.setCodestream (cs);
                 ms.setContCodestream (this);
                 ms.setDataInputStream (_dstream);
                 ms.setRepInfo (info);
                 ms.setModule (_module);
+                // Read the length of the marker segment. This includes 2 bytes
+                // for the length field itself but *not* the length of the
+                // 2-byte marker, so a marker segment actually has a size of
+                // markLen + 2.
                 int markLen = ms.readMarkLen ();
+                // Run the parser for this marker segment. The parameter of the
+                // process method expects the number of bytes that must be
+                // consumed. A marker segment without parameters (just a marker)
+                // implicitly has length 0. A marker segment with parameters has
+                // length markLen, but 2 bytes were already consumed by the
+                // readMarkLen method when reading the length field, so in this
+                // case we have to consume the remaining (markLen - 2) bytes.
                 if (!ms.process (markLen == 0 ? 0 : markLen - 2)) {
                     info.setMessage (new ErrorMessage 
                         (MessageConstants.JPEG2000_HUL_9));
@@ -138,15 +154,21 @@ public class ContCodestream {
                 // markLen includes the marker length bytes, 
                 // but not the marker bytes
    
+                // We're done parsing this marker segment. Let's update the
+                // count of bytes remaining in this codestream (and, if
+                // applicable, tile-part) before parsing the next marker segment
+                // in the next iteration of the while loop.
                 if (!(ms instanceof Marker)) {
+                    // This was a proper marker segment with parameters, so we
+                    // consumed (marker segment length + 2-bytes marker) bytes.
                     lengthLeft -= markLen + 2;
-                    // Count down on the bytes in a tile if we're in one
                     if (_tileLeft > 0) {
                         _tileLeft -= markLen + 2;
                     }
                 }
                 else {
-                    // It's a plain marker -- no length data.
+                    // This was a plain marker without parameters, so we only
+                    // consumed 2 bytes for the marker.
                     lengthLeft -= 2;
                     if (_tileLeft > 0) {
                         _tileLeft -= 2;
@@ -154,6 +176,9 @@ public class ContCodestream {
                     if (marker == SOD) {
                         // 0X93 is SOD, which is followed by a bitstream.
                         // We skip the number of bytes not yet deducted from _tileLeft
+                        // TODO The _tileLeft variable has type long, and the
+                        // skipBytes methods expects a long as well. So why is
+                        // _tileLeft cast to int here?
                         _module.skipBytes (_dstream, (int) _tileLeft, _module);
                         lengthLeft -= _tileLeft;
                         _tileLeft = 0;
