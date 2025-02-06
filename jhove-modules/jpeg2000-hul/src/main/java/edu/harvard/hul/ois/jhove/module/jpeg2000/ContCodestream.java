@@ -151,9 +151,23 @@ public class ContCodestream {
                         info.setWellFormed (false);
                         return false;
                 }
-                // markLen includes the marker length bytes, 
-                // but not the marker bytes
-   
+                // An SOT marker marks the beginning of a tile-part. It has yet
+                // another length field apart from the length of the marker
+                // segment. This length field contains the length of the whole
+                // tile-part from the very beginning of this SOT marker segment
+                // to the end of data of that tile-part; it comprises several
+                // other marker segments. The SOTMarkerSegment parser writes
+                // this length to the _tileLeft attribute. Now, if _tileLeft is
+                // 0, this tile-part is assumed to contain all data until the
+                // end of the current codestream (see section A.4.2 (page 22) in
+                // https://web.archive.org/web/20130810200214/http://www.jpeg.org/public/fcd15444-1.pdf.
+                // In other words, if _tileLeft is 0, its length should be the
+                // remaining length of the enclosing codestream, which is
+                // recorded in the lengthLeft variable.
+                if (marker == SOT && _tileLeft == 0) {
+                    _tileLeft = lengthLeft;
+                }
+
                 // We're done parsing this marker segment. Let's update the
                 // count of bytes remaining in this codestream (and, if
                 // applicable, tile-part) before parsing the next marker segment
