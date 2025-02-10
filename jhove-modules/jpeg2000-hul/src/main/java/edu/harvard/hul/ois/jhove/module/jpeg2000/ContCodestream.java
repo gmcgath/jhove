@@ -160,7 +160,7 @@ public class ContCodestream {
                 // this length to the _tileLeft attribute. Now, if _tileLeft is
                 // 0, this tile-part is assumed to contain all data until the
                 // end of the current codestream (see section A.4.2 (page 22) in
-                // https://web.archive.org/web/20130810200214/http://www.jpeg.org/public/fcd15444-1.pdf.
+                // https://web.archive.org/web/20130810200214/http://www.jpeg.org/public/fcd15444-1.pdf).
                 // In other words, if _tileLeft is 0, its length should be the
                 // remaining length of the enclosing codestream, which is
                 // recorded in the lengthLeft variable.
