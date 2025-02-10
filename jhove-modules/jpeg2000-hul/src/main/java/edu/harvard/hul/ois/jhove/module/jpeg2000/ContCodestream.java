@@ -171,35 +171,23 @@ public class ContCodestream {
                 // We're done parsing this marker segment. Let's update the
                 // count of bytes remaining in this codestream (and, if
                 // applicable, tile-part) before parsing the next marker segment
-                // in the next iteration of the while loop.
-                if (!(ms instanceof Marker)) {
-                    // This was a proper marker segment with parameters, so we
-                    // consumed (marker segment length + 2-bytes marker) bytes.
-                    lengthLeft -= markLen + 2;
-                    if (_tileLeft > 0) {
-                        _tileLeft -= markLen + 2;
-                    }
+                // in the next iteration of the while loop. As explained above,
+                // a marker segment has a size of markLen + 2 bytes, where
+                // markLen is 0 for marker segments without parameters.
+                lengthLeft -= markLen + 2;
+                if (_tileLeft > 0) {
+                    _tileLeft -= markLen + 2;
                 }
-                else {
-                    // This was a plain marker without parameters, so we only
-                    // consumed 2 bytes for the marker.
-                    lengthLeft -= 2;
-                    if (_tileLeft > 0) {
-                        _tileLeft -= 2;
-                    }
-                    if (marker == SOD) {
-                        // 0X93 is SOD, which is followed by a bitstream.
-                        // We skip the number of bytes not yet deducted from _tileLeft
-                        // TODO The _tileLeft variable has type long, and the
-                        // skipBytes methods expects a long as well. So why is
-                        // _tileLeft cast to int here?
-                        _module.skipBytes (_dstream, (int) _tileLeft, _module);
-                        lengthLeft -= _tileLeft;
-                        _tileLeft = 0;
-                    }
-                    else if (marker == EOC) {
-                        break;      // end of codestream
-                    }
+                // A SOD marker segment is followed by a bitstream (raw data).
+                // We skip the number of bytes not yet deducted from _tileLeft.
+                if (marker == SOD) {
+                    _module.skipBytes (_dstream, _tileLeft, _module);
+                    lengthLeft -= _tileLeft;
+                    _tileLeft = 0;
+                }
+                if (marker == EOC) {
+                    // End of codestream, we're done.
+                    break;
                 }
             }
         }
