@@ -68,7 +68,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <mvn.assembly.version>3.6.0</mvn.assembly.version>
+    <mvn.assembly.version>3.7.1</mvn.assembly.version>
     <mvn.clean.version>3.3.2</mvn.clean.version>
     <mvn.compiler.version>3.12.1</mvn.compiler.version>
     <mvn.dependency.version>3.6.1</mvn.dependency.version>
@@ -80,7 +80,7 @@
     <mvn.jar.version>3.3.0</mvn.jar.version>
     <mvn.javadoc.version>3.6.3</mvn.javadoc.version>
     <mvn.source.version>3.3.0</mvn.source.version>
-    <mvn.surefire.version>3.2.5</mvn.surefire.version>
+    <mvn.surefire.version>3.5.2</mvn.surefire.version>
     <mvn.release.version>3.0.1</mvn.release.version>
     <jacoco.version>0.8.11</jacoco.version>
     <java.source.version>1.8</java.source.version>
