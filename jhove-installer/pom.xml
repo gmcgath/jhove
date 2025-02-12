@@ -15,7 +15,7 @@
 
   <properties>
     <installer.output.filename>jhove-xplt-installer-${project.version}.jar</installer.output.filename>
-    <izpack.version>5.2.0</izpack.version>
+    <izpack.version>5.2.3</izpack.version>
     <izpack.staging>${project.build.directory}/staging</izpack.staging>
     <izpack.target>${project.build.directory}</izpack.target>
     <izpack.scripts>${project.build.scriptSourceDirectory}</izpack.scripts>
