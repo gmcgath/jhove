@@ -12,7 +12,7 @@
   <description>Third party validation modules for JHOVE.</description>
 
   <properties>
-    <jwat.version>1.0.3</jwat.version>
+    <jwat.version>1.2.1</jwat.version>
     <epubcheck.version>5.1.0</epubcheck.version>
   </properties>
 
