@@ -109,58 +109,85 @@ public class ContCodestream {
         }
         try {
             while (lengthLeft > 0) {
-                // "Marker segments" are followed by a length parameter,
-                // but "markers" aren't.  
+                // Look for the start of a marker (0xFF).
                 int ff = ModuleBase.readUnsignedByte (_dstream, _module);
                 if (ff != 0XFF) {
                     info.setMessage (new ErrorMessage(MessageConstants.JPEG2000_HUL_8));
                     info.setWellFormed (false);
                     return false;
                 }
+                // Now read the type of marker (one byte).
                 int marker = ModuleBase.readUnsignedByte (_dstream, _module);
-                if (marker == 0X4F) {
+                if (marker == SOC) {
                     // we got the SOC marker, as expected
                     socSeen = true;
                 }
+                // Some markers are followed by additional data called
+                // parameters. The marker together with its (optional)
+                // parameters are called a marker segment. We now prepare a
+                // parser for the specific type of marker segment we
+                // encountered.
                 MarkerSegment ms = MarkerSegment.markerSegmentMaker (marker);
                 ms.setCodestream (cs);
                 ms.setContCodestream (this);
                 ms.setDataInputStream (_dstream);
                 ms.setRepInfo (info);
                 ms.setModule (_module);
+                // Read the length of the marker segment. This includes 2 bytes
+                // for the length field itself but *not* the length of the
+                // 2-byte marker, so a marker segment actually has a size of
+                // markLen + 2.
                 int markLen = ms.readMarkLen ();
+                // Run the parser for this marker segment. The parameter of the
+                // process method expects the number of bytes that must be
+                // consumed. A marker segment without parameters (just a marker)
+                // implicitly has length 0. A marker segment with parameters has
+                // length markLen, but 2 bytes were already consumed by the
+                // readMarkLen method when reading the length field, so in this
+                // case we have to consume the remaining (markLen - 2) bytes.
                 if (!ms.process (markLen == 0 ? 0 : markLen - 2)) {
                     info.setMessage (new ErrorMessage 
                         (MessageConstants.JPEG2000_HUL_9));
                         info.setWellFormed (false);
                         return false;
                 }
-                // markLen includes the marker length bytes, 
-                // but not the marker bytes
-   
-                if (!(ms instanceof Marker)) {
-                    lengthLeft -= markLen + 2;
-                    // Count down on the bytes in a tile if we're in one
-                    if (_tileLeft > 0) {
-                        _tileLeft -= markLen + 2;
-                    }
+                // An SOT marker marks the beginning of a tile-part. It has yet
+                // another length field apart from the length of the marker
+                // segment. This length field contains the length of the whole
+                // tile-part from the very beginning of this SOT marker segment
+                // to the end of data of that tile-part; it comprises several
+                // other marker segments. The SOTMarkerSegment parser writes
+                // this length to the _tileLeft attribute. Now, if _tileLeft is
+                // 0, this tile-part is assumed to contain all data until the
+                // end of the current codestream (see section A.4.2 (page 22) in
+                // https://web.archive.org/web/20130810200214/http://www.jpeg.org/public/fcd15444-1.pdf).
+                // In other words, if _tileLeft is 0, its length should be the
+                // remaining length of the enclosing codestream, which is
+                // recorded in the lengthLeft variable.
+                if (marker == SOT && _tileLeft == 0) {
+                    _tileLeft = lengthLeft;
                 }
-                else {
-                    // It's a plain marker -- no length data.
-                    lengthLeft -= 2;
-                    if (_tileLeft > 0) {
-                        _tileLeft -= 2;
-                    }
-                    if (marker == SOD) {
-                        // 0X93 is SOD, which is followed by a bitstream.
-                        // We skip the number of bytes not yet deducted from _tileLeft
-                        _module.skipBytes (_dstream, (int) _tileLeft, _module);
-                        lengthLeft -= _tileLeft;
-                        _tileLeft = 0;
-                    }
-                    else if (marker == EOC) {
-                        break;      // end of codestream
-                    }
+
+                // We're done parsing this marker segment. Let's update the
+                // count of bytes remaining in this codestream (and, if
+                // applicable, tile-part) before parsing the next marker segment
+                // in the next iteration of the while loop. As explained above,
+                // a marker segment has a size of markLen + 2 bytes, where
+                // markLen is 0 for marker segments without parameters.
+                lengthLeft -= markLen + 2;
+                if (_tileLeft > 0) {
+                    _tileLeft -= markLen + 2;
+                }
+                // A SOD marker segment is followed by a bitstream (raw data).
+                // We skip the number of bytes not yet deducted from _tileLeft.
+                if (marker == SOD) {
+                    _module.skipBytes (_dstream, _tileLeft, _module);
+                    lengthLeft -= _tileLeft;
+                    _tileLeft = 0;
+                }
+                if (marker == EOC) {
+                    // End of codestream, we're done.
+                    break;
                 }
             }
         }

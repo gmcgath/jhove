@@ -10,7 +10,7 @@
 
   <groupId>org.openpreservation.jhove</groupId>
   <artifactId>jhove</artifactId>
-  <version>1.32.1</version>
+  <version>1.33.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>JHOVE - JSTOR/Harvard Object Validation Environment</name>
@@ -68,7 +68,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <mvn.assembly.version>3.6.0</mvn.assembly.version>
+    <mvn.assembly.version>3.7.1</mvn.assembly.version>
     <mvn.clean.version>3.3.2</mvn.clean.version>
     <mvn.compiler.version>3.12.1</mvn.compiler.version>
     <mvn.dependency.version>3.6.1</mvn.dependency.version>
@@ -80,7 +80,7 @@
     <mvn.jar.version>3.3.0</mvn.jar.version>
     <mvn.javadoc.version>3.6.3</mvn.javadoc.version>
     <mvn.source.version>3.3.0</mvn.source.version>
-    <mvn.surefire.version>3.2.5</mvn.surefire.version>
+    <mvn.surefire.version>3.5.2</mvn.surefire.version>
     <mvn.release.version>3.0.1</mvn.release.version>
     <jacoco.version>0.8.11</jacoco.version>
     <java.source.version>1.8</java.source.version>
@@ -202,11 +202,36 @@
             </goals>
           </execution>
           <execution>
-              <id>generate-code-coverage-report</id>
-              <phase>test</phase>
-              <goals>
-                  <goal>report</goal>
-              </goals>
+            <id>generate-code-coverage-report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>templates/docker</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -233,6 +258,7 @@
 
   <dependencies>
   </dependencies>
+
   <profiles>
     <profile>
       <id>jdk9</id>
@@ -273,13 +299,13 @@
       </build>
       <dependencies>
 
-      <!-- https://mvnrepository.com/artifact/org.sonarsource.java/sonar-jacoco-listeners -->
-      <dependency>
-        <groupId>org.sonarsource.java</groupId>
-        <artifactId>sonar-jacoco-listeners</artifactId>
-        <version>5.14.0.18788</version>
-        <scope>test</scope>
-      </dependency>
+        <!-- https://mvnrepository.com/artifact/org.sonarsource.java/sonar-jacoco-listeners -->
+        <dependency>
+          <groupId>org.sonarsource.java</groupId>
+          <artifactId>sonar-jacoco-listeners</artifactId>
+          <version>5.14.0.18788</version>
+          <scope>test</scope>
+        </dependency>
 
       </dependencies>
     </profile>
@@ -405,7 +431,6 @@
         </repository>
       </distributionManagement>
     </profile>
-
   </profiles>
 
 </project>
