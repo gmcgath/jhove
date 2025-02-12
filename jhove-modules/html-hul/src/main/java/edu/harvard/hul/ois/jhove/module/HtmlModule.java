@@ -105,8 +105,8 @@ public class HtmlModule extends ModuleBase {
     private static final String XHTML_1_1_STR = "XHTML 1.1";
 
     private static final String NAME = "HTML-hul";
-    private static final String RELEASE = "1.4.4";
-    private static final int[] DATE = { 2024, 8, 22 };
+    private static final String RELEASE = "1.4.5";
+    private static final int[] DATE = { 2025, 02, 05 };
     private static final String[] FORMAT = { "HTML" };
     private static final String COVERAGE = "HTML 3.2, HTML 4.0 Strict,"
             + "HTML 4.0 Transitional, HTML 4.0 Frameset, "
@@ -231,7 +231,7 @@ public class HtmlModule extends ModuleBase {
                         + "(Second Edition)",
                 DocumentType.REPORT);
         doc.setPublisher(w3cAgent);
-        doc.setDate("01-08-2002");
+        doc.setDate("2002-08-01");
         doc.setIdentifier(new Identifier("http://www.w3.org/TR/xhtml1/",
                 IdentifierType.URL));
         _specification.add(doc);
@@ -240,7 +240,7 @@ public class HtmlModule extends ModuleBase {
         doc = new Document(" XHTML(TM) 1.1 - Module-based XHTML",
                 DocumentType.REPORT);
         doc.setPublisher(w3cAgent);
-        doc.setDate("31-05-2001");
+        doc.setDate("2001-05-31");
         doc.setIdentifier(new Identifier(
                 "http://www.w3.org/TR/2001/REC-xhtml11-20010531/",
                 IdentifierType.URL));

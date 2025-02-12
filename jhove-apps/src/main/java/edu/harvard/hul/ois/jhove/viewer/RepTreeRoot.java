@@ -29,6 +29,7 @@ import edu.harvard.hul.ois.jhove.PropertyType;
 import edu.harvard.hul.ois.jhove.Rational;
 import edu.harvard.hul.ois.jhove.RepInfo;
 import edu.harvard.hul.ois.jhove.TextMDMetadata;
+import edu.harvard.hul.ois.jhove.handler.Handlers;
 
 /**
  * This subclass of DefaultMutableTreeNode simply adds a method for constructing
@@ -48,6 +49,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode {
 
     /* Sample rate. */
     private double _sampleRate;
+    private String reportingModule = "";
 
     /**
      * Constructor.
@@ -255,7 +257,8 @@ public class RepTreeRoot extends DefaultMutableTreeNode {
             // leaf children.
             DefaultMutableTreeNode moduleNode = new DefaultMutableTreeNode(
                     "Module");
-            moduleNode.add(new DefaultMutableTreeNode(module.getName(), false));
+            this.reportingModule = module.getName();
+            moduleNode.add(new DefaultMutableTreeNode(this.reportingModule, false));
             moduleNode.add(new DefaultMutableTreeNode("Release: "
                     + module.getRelease(), false));
             moduleNode.add(new DefaultMutableTreeNode("Date: "
@@ -350,6 +353,8 @@ public class RepTreeRoot extends DefaultMutableTreeNode {
                 if (msg.getId() != null && !msg.getId().isEmpty()) {
                     mNode.add(new DefaultMutableTreeNode("ID: "
                             + msg.getId()));
+                    mNode.add(new DefaultMutableTreeNode("InfoLink: "
+                            + Handlers.makeInfoLink(this.reportingModule, msg.getId())));
                 }
 
                 String subMessage = msg.getSubMessage();

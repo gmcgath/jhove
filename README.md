@@ -2,13 +2,11 @@ JHOVE
 =====
 *JSTOR/Harvard Object Validation Environment*
 
-[![Build Status](https://travis-ci.org/openpreserve/jhove.svg?branch=integration)](https://travis-ci.org/openpreserve/jhove "JHOVE Travis-CI integration build")
-[![Build Status](http://jenkins.openpreservation.org/buildStatus/icon?job=jhove-dev)](http://jenkins.openpreservation.org/job/jhove-dev/ "OPF Jenkins development build")
-[![Build Status](http://jenkins.openpreservation.org/buildStatus/icon?job=jhove)](http://jenkins.openpreservation.org/job/jhove/ "OPF Jenkins release build")
+![example branch parameter](https://github.com/openpreserve/jhove/actions/workflows/test-pr.yml/badge.svg?branch=integration)
+[![Build Status](https://jenkins.openpreservation.org/job/JHOVE/job/jhove-1.32/badge/icon)](https://jenkins.openpreservation.org/job/JHOVE/job/jhove-1.32/ "OPF Jenkins")
 [![Maven Central](https://img.shields.io/maven-central/v/org.openpreservation.jhove/jhove.svg)](http://repo1.maven.org/maven2/org/openpreservation/jhove/ "JHOVE on Maven central")
 [![CodeCov Coverage](https://img.shields.io/codecov/c/github/openpreserve/jhove.svg)](https://codecov.io/gh/openpreserve/jhove/ "CodeCov test coverage figure")
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9561b9ee71624cc5a69bd78ebc86e3af)](https://www.codacy.com/app/openpreserve/jhove?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=openpreserve/jhove&amp;utm_campaign=Badge_Grade)
-
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/42f8b3de592740e7b2a22a419462815d)](https://app.codacy.com/gh/openpreserve/jhove/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![GitHub issues](https://img.shields.io/github/issues/openpreserve/jhove.svg)](https://github.com/openpreserve/jhove/issues "Open issues on GitHub")
 [![GitHub forks](https://img.shields.io/github/forks/openpreserve/jhove.svg)](https://github.com/openpreserve/jhove/network "Number of forks on GitHub")
 
@@ -20,7 +18,7 @@ Copyright 2003-2012 by JSTOR and the President and Fellows of Harvard College,
 JHOVE is made available under the
 [GNU Lesser General Public License (LGPL)](http://www.gnu.org/licenses/lgpl.html).
 
-Rev. 1.26.1, 2022-07-14
+Rev. 1.32.0, 2024-09-12
 
 JHOVE Homepage
 --------------
@@ -69,7 +67,7 @@ Pre-requisites
   and OpenJDK 8 on Travis. Releases are built using Oracle JDK 8
   from the [OPF's Jenkins server](http://jenkins.openpreservation.org/).
 
-2. If you would like to build JHOVE from source, then life will be easiest if
+1. If you would like to build JHOVE from source, then life will be easiest if
   you use [Apache Maven](https://maven.apache.org/).
 
 Getting JHOVE
