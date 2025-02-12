@@ -9,7 +9,6 @@
   </parent>
 
   <artifactId>jhove-installer</artifactId>
-  <version>1.33.0-SNAPSHOT</version>
   <name>JHOVE Installer</name>
   <description>Maven-built IzPack installer for JHOVE.</description>
 
